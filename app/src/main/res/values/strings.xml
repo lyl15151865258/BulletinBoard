@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">中本硕公示板</string>
+    <string name="app_title">明治项目(中本硕)公示板</string>
+
+    <string name="RealTimeSyncService">同步服务</string>
+    <string name="RealTimeSyncServiceRunning">同步服务正在运行</string>
+
+    <string name="TimeTaskService">定时任务服务</string>
+    <string name="TimeTaskServiceRunning">定时任务服务正在运行</string>
+
+    <string name="Cancel">取消</string>
+    <string name="Continue">继续</string>
+    <string name="warning_request_permission">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;为了软件的正常运行，我们需要申请以下权限：存储、读取手机状态，请在稍后的弹窗中授予权限，否则软件将不能使用，谢谢配合！</string>
+    <string name="warning_to_setting_permission">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;由于您拒绝了部分必要权限，软件将无法正常运行，请您到设置页面后授予所有权限，谢谢配合！</string>
+    <string name="warning_to_exit">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;您将要退出程序，是否继续？</string>
+
+</resources>

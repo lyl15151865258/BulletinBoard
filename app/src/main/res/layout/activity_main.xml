@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_screen_default"
+    android:orientation="vertical"
+    tools:context=".activity.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/dp_5"
+            android:text="@string/app_title"
+            android:textColor="@color/gray_5"
+            android:fontFamily="@font/fzzzhf"
+            android:textSize="@dimen/sp_28" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvPosition"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:overScrollMode="never"
+                android:scrollbars="none" />
+
+            <View
+                android:layout_width="@dimen/dp_2"
+                android:layout_height="match_parent"
+                android:background="@color/divider" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/llRealData"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_0"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:padding="@dimen/dp_5">
+
+                                <TextView
+                                    android:id="@+id/tvCity"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/dp_5"
+                                    android:textColor="@color/gray_5"
+                                    android:textSize="@dimen/sp_14"
+                                    android:textStyle="bold" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:id="@+id/ivWeather"
+                                        android:layout_width="@dimen/dp_50"
+                                        android:layout_height="@dimen/dp_50"
+                                        android:contentDescription="@null" />
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="@dimen/dp_10"
+                                        android:orientation="vertical">
+
+                                        <LinearLayout
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="horizontal">
+
+                                            <TextView
+                                                android:id="@+id/tvWeather"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:textColor="@color/gray_5"
+                                                android:textSize="@dimen/sp_12" />
+
+                                            <TextView
+                                                android:id="@+id/tvTemperature"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:textColor="@color/gray_5"
+                                                android:textSize="@dimen/sp_12" />
+
+                                        </LinearLayout>
+
+                                        <TextView
+                                            android:id="@+id/tvWind"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="@dimen/dp_4"
+                                            android:textColor="@color/gray_5"
+                                            android:textSize="@dimen/sp_12" />
+
+                                        <TextView
+                                            android:id="@+id/tvHumidity"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="@dimen/dp_4"
+                                            android:textColor="@color/gray_5"
+                                            android:textSize="@dimen/sp_12" />
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <com.zhongbenshuo.bulletinboard.widget.ClockView
+                                android:id="@+id/cvIlluminance"
+                                android:layout_width="@dimen/dp_100"
+                                android:layout_height="@dimen/dp_100"
+                                android:layout_marginTop="@dimen/dp_10"
+                                android:visibility="invisible"
+                                app:color_dial_high="@color/red_600"
+                                app:color_dial_lower="@color/green_600"
+                                app:color_dial_middle="@color/orange_600"
+                                app:stroke_width_dial="@dimen/dp_4"
+                                app:text_size_dial="@dimen/sp_8"
+                                app:text_size_value="@dimen/sp_10"
+                                app:text_title_color="@color/gray_5"
+                                app:text_title_dial=""
+                                app:text_title_size="@dimen/sp_10" />
+
+                        </LinearLayout>
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/rvRealTime"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="2"
+                            android:overScrollMode="never"
+                            android:scrollbars="none" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_2"
+                        android:background="@color/divider" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:padding="@dimen/dp_3"
+                                android:text="时间"
+                                android:textColor="@color/gray_5"
+                                android:textSize="@dimen/sp_11"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:layout_width="@dimen/dp_1"
+                                android:layout_height="match_parent"
+                                android:background="@color/divider" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:padding="@dimen/dp_3"
+                                android:text="温度"
+                                android:textColor="@color/gray_5"
+                                android:textSize="@dimen/sp_11"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:layout_width="@dimen/dp_1"
+                                android:layout_height="match_parent"
+                                android:background="@color/divider" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:padding="@dimen/dp_3"
+                                android:text="湿度"
+                                android:textColor="@color/gray_5"
+                                android:textSize="@dimen/sp_11"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:layout_width="@dimen/dp_1"
+                                android:layout_height="match_parent"
+                                android:background="@color/divider" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:padding="@dimen/dp_3"
+                                android:text="PM2.5"
+                                android:textColor="@color/gray_5"
+                                android:textSize="@dimen/sp_11"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:layout_width="@dimen/dp_1"
+                                android:layout_height="match_parent"
+                                android:background="@color/divider" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:padding="@dimen/dp_3"
+                                android:text="PM10"
+                                android:textColor="@color/gray_5"
+                                android:textSize="@dimen/sp_11"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:layout_width="@dimen/dp_1"
+                                android:layout_height="match_parent"
+                                android:background="@color/divider" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:padding="@dimen/dp_3"
+                                android:text="甲醛"
+                                android:textColor="@color/gray_5"
+                                android:textSize="@dimen/sp_11"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:layout_width="@dimen/dp_1"
+                                android:layout_height="match_parent"
+                                android:background="@color/divider" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:padding="@dimen/dp_3"
+                                android:text="二氧化碳"
+                                android:textColor="@color/gray_5"
+                                android:textSize="@dimen/sp_11"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_1"
+                            android:background="@color/divider" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/rvHistory"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_84"
+                            android:overScrollMode="never"
+                            android:scrollbars="none" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <com.ywl5320.wlmedia.surface.WlSurfaceView
+                    android:id="@+id/wlsurfaceview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_2"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end|center_vertical"
+            android:padding="@dimen/dp_5">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/ivNetWork"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_15"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"
+                    android:visibility="invisible"
+                    app:srcCompat="@drawable/network" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_13"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/logo_white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_3"
+                android:text="中本硕建设"
+                android:textColor="@color/gray_5"
+                android:textSize="@dimen/sp_13" />
+
+            <TextClock
+                android:id="@+id/tvClock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:format12Hour="yyyy-MM-dd EEEE HH:mm:ss"
+                android:format24Hour="yyyy-MM-dd EEEE HH:mm:ss"
+                android:text="2019-09-04 星期三 22:22:22"
+                android:textColor="@color/gray_5"
+                android:textSize="@dimen/sp_13" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/ivUser"
+        android:layout_width="@dimen/dp_180"
+        android:layout_height="@dimen/dp_180"
+        android:layout_gravity="end|bottom"
+        android:contentDescription="@null" />
+
+</FrameLayout>

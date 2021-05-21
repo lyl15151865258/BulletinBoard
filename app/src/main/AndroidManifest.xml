@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.zhongbenshuo.bulletinboard">
+
+    <supports-screens android:xlargeScreens="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 存储权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 前台Service权限 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- 开机自动启动 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- 避免Android8.0安装APK时提示解析安装包错误 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <application
+        android:name=".BulletinBoard"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:targetApi="n">
+
+        <!-- 解决谷歌GooglePlay Services的bug，报错内容：java.lang.NoClassDefFoundError:failed resolution of :Lorg/apache/http/ProtocolVersion -->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <!-- 适配全面屏，屏幕最大高宽比设置为2.4 -->
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.4" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <!-- 用于结合SharedPreferences使用的跨进程数据共享 -->
+        <provider
+            android:name=".contentprovider.SPContentProvider"
+            android:authorities="com.zhongbenshuo.bulletinboard"
+            android:exported="false"
+            android:process=":provider" />
+
+        <activity
+            android:name=".activity.LogoActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <!--                <category android:name="android.intent.category.HOME" />-->
+                <!--                <category android:name="android.intent.category.DEFAULT" />-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="sensorLandscape" />
+
+        <!-- WebSocket通信服务 -->
+        <service
+            android:name=".service.WebSocketService"
+            android:enabled="true"
+            android:persistent="true" />
+
+        <!-- 定时任务服务 -->
+        <service
+            android:name=".service.TimeTaskService"
+            android:enabled="true"
+            android:persistent="true" />
+
+        <!-- 下载文件时在状态栏显示进度的服务-->
+        <service
+            android:name=".service.DownloadService"
+            android:enabled="true"
+            android:persistent="true" />
+
+        <receiver android:name=".broadcastreceiver.BootBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".broadcastreceiver.SdcardBroadcastReceiver">
+            <intent-filter>
+                <!-- 卸载移除Sdcard -->
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+                <!-- 挂载Sdcard -->
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <!-- Sdcard开始扫描 -->
+                <action android:name="android.intent.action.MEDIA_SCANNER_STARTED" />
+                <!-- Sdcard扫描完成 -->
+                <action android:name="android.intent.action.MEDIA_SCANNER_FINISHED" />
+                <!-- 系统是这样发送广播的，所以必须这样订阅 -->
+                <data android:scheme="false" />
+            </intent-filter>
+
+        </receiver>
+
+    </application>
+
+</manifest>

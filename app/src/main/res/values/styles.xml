@@ -1,0 +1,57 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="textAllCaps">false</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        //是否有遮盖
+        <item name="windowActionModeOverlay">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/bg_logo</item>
+    </style>
+
+    <!-- 自定义loading dialog -->
+    <style name="loading_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowFrame">@null</item><!--边框-->
+        <item name="android:windowIsFloating">true</item><!--是否浮现在activity之上-->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsTranslucent">true</item><!--半透明-->
+        <item name="windowNoTitle">true</item><!--无标题-->
+        <item name="android:windowBackground">@android:color/transparent</item><!--自己想要的背景-->
+        <item name="android:backgroundDimEnabled">true</item><!--启用昏暗背景-->
+        <item name="android:backgroundDimAmount">0.3</item><!--昏暗度-->
+    </style>
+
+    <!-- 仪表盘自定义属性 -->
+    <attr name="color_dial_lower" format="color" />
+    <attr name="color_dial_middle" format="color" />
+    <attr name="color_dial_high" format="color" />
+    <attr name="text_size_dial" format="dimension" />
+    <attr name="stroke_width_dial" format="dimension" />
+    <attr name="radius_circle_dial" format="dimension" />
+    <attr name="text_title_dial" format="string" />
+    <attr name="text_title_size" format="dimension" />
+    <attr name="text_title_color" format="color" />
+    <attr name="text_size_value" format="dimension" />
+    <attr name="animator_play_time" format="integer" />
+
+    <declare-styleable name="ClockView">
+        <attr name="color_dial_lower" />
+        <attr name="color_dial_middle" />
+        <attr name="color_dial_high" />
+        <attr name="text_size_dial" />
+        <attr name="stroke_width_dial" />
+        <attr name="radius_circle_dial" />
+        <attr name="text_title_dial" />
+        <attr name="text_title_size" />
+        <attr name="text_title_color" />
+        <attr name="text_size_value" />
+        <attr name="animator_play_time" />
+    </declare-styleable>
+
+</resources>
