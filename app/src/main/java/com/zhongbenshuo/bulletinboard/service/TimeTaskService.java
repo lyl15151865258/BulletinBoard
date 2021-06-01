@@ -15,13 +15,22 @@ import android.graphics.Color;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
+import com.google.gson.JsonObject;
 import com.zhongbenshuo.bulletinboard.R;
+import com.zhongbenshuo.bulletinboard.bean.BoardData;
 import com.zhongbenshuo.bulletinboard.bean.EventMsg;
+import com.zhongbenshuo.bulletinboard.bean.ProjectAnnouncement;
+import com.zhongbenshuo.bulletinboard.bean.Result;
 import com.zhongbenshuo.bulletinboard.bean.Weather;
+import com.zhongbenshuo.bulletinboard.bean.userstatus.AllUserInfoStatus;
+import com.zhongbenshuo.bulletinboard.bean.userstatus.AllUserInfoStatusResult;
+import com.zhongbenshuo.bulletinboard.bean.userstatus.ShowData;
 import com.zhongbenshuo.bulletinboard.constant.Constants;
+import com.zhongbenshuo.bulletinboard.constant.ErrorCode;
 import com.zhongbenshuo.bulletinboard.constant.NetWork;
 import com.zhongbenshuo.bulletinboard.network.ExceptionHandle;
 import com.zhongbenshuo.bulletinboard.network.NetClient;
@@ -33,6 +42,9 @@ import com.zhongbenshuo.bulletinboard.utils.TimeUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +53,9 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.zhongbenshuo.bulletinboard.bean.userstatus.ShowData.EMPLOYEE;
+import static com.zhongbenshuo.bulletinboard.bean.userstatus.ShowData.POSITION;
 
 /**
  * 定时任务服务（定时同步服务器数据，定时重启）
@@ -52,11 +67,13 @@ import io.reactivex.schedulers.Schedulers;
 
 public class TimeTaskService extends Service {
 
-    private String TAG = "TimeTaskService";
+    private final String TAG = "TimeTaskService";
     private Context mContext;
     private TimeTaskServiceBinder timeTaskServiceBinder;
     private ScheduledExecutorService threadPool;
-    private static final int betweenTime = 59;                //间隔59秒执行一次
+    private static final int betweenTime = 1;                //间隔1秒执行一次
+    private List<ShowData> showDataList;
+    private List<ProjectAnnouncement> projectAnnouncementList;
 
     @Nullable
     @Override
@@ -83,6 +100,8 @@ public class TimeTaskService extends Service {
         threadPool = Executors.newScheduledThreadPool(3);
         showNotification();
         executeShutDown();
+        showDataList = new ArrayList<>();
+        projectAnnouncementList = new ArrayList<>();
         timeTaskServiceBinder = new TimeTaskServiceBinder();
     }
 
@@ -90,6 +109,7 @@ public class TimeTaskService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtils.d(TAG, "TimeTaskService:onStartCommand");
         searchWeather();
+        getEmployeeStatusByDepartment();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -129,15 +149,25 @@ public class TimeTaskService extends Service {
     @SuppressLint("WrongConstant")
     public void executeShutDown() {
         threadPool.scheduleAtFixedRate(() -> {
-            String currentTime = TimeUtils.getCurrentTimeWithoutSecond();
+            String currentTime = TimeUtils.getCurrentTime();
             LogUtils.d(TAG, "当前时间：" + currentTime);
             // 每5分钟查询一次实时天气
-            if (currentTime.endsWith("0") || currentTime.endsWith("5")) {
+            if (currentTime.split(":")[1].endsWith("0") || currentTime.split(":")[1].endsWith("5")) {
                 searchWeather();
             }
             // 每天06:00重启APP
-            if (currentTime.equals("06:00")) {
+            if (currentTime.equals("06:00:00")) {
                 restartApp();
+            }
+            // 每10秒钟查询一次
+            if (currentTime.endsWith("0")) {
+                getEmployeeStatusByDepartment();
+            }
+            // 每30秒翻页一次
+            if (currentTime.split(":")[2].equals("00")||currentTime.split(":")[2].equals("30")){
+                EventMsg msg = new EventMsg();
+                msg.setTag(Constants.CHANGE_PAGE);
+                EventBus.getDefault().post(msg);
             }
         }, 0, betweenTime, TimeUnit.SECONDS);
     }
@@ -147,7 +177,7 @@ public class TimeTaskService extends Service {
      */
     public void searchWeather() {
         LogUtils.d(TAG, "查询天气");
-        Observable<Weather> resultObservable = NetClient.getInstance(NetClient.BASE_URL_WEATHER, false, false).getZbsApi().searchWeather(NetWork.GAODE_WEB, "320505", "base", "JSON");
+        Observable<Weather> resultObservable = NetClient.getInstance(NetClient.BASE_URL_WEATHER, false, false).getZbsApi().searchWeather(NetWork.GAODE_WEB, "440118", "base", "JSON");
         resultObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new NetworkObserver<Weather>(mContext) {
             @Override
             public void onSubscribe(Disposable d) {
@@ -170,6 +200,66 @@ public class TimeTaskService extends Service {
                     EventBus.getDefault().post(msg);
                 } else {
                     LogUtils.d(TAG, "定时任务，实时天气获取失败");
+                }
+            }
+        });
+    }
+
+    /**
+     * 根据部门查询员工状态
+     */
+    private void getEmployeeStatusByDepartment() {
+        JsonObject params = new JsonObject();
+        params.addProperty("companyId", 1);
+        params.addProperty("departmentName", "项目部—广州明治");
+        Observable<Result> resultObservable = NetClient.getInstance(NetClient.getBaseUrlProject(), false, true).getZbsApi().getEmployeeStatusByDepartment(params);
+        resultObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new NetworkObserver<Result>(mContext) {
+
+            @Override
+            public void onSubscribe(Disposable d) {
+                LogUtils.d(TAG, "定时任务，开始查询人员状态");
+            }
+
+            @Override
+            public void onError(ExceptionHandle.ResponseThrowable responseThrowable) {
+                LogUtils.d(TAG, "定时任务，查询人员状态失败");
+            }
+
+            @Override
+            public void onNext(Result result) {
+                super.onNext(result);
+                if (result.getCode() == ErrorCode.SUCCESS) {
+                    AllUserInfoStatusResult allUserInfoStatusResult = GsonUtils.parseJSON(GsonUtils.convertJSON(result.getData()), AllUserInfoStatusResult.class);
+                    List<AllUserInfoStatus> employeeStatusList = allUserInfoStatusResult.getEmployeeStatusList();
+                    projectAnnouncementList.clear();
+                    projectAnnouncementList.addAll(allUserInfoStatusResult.getProjectAnnouncementList());
+                    showDataList.clear();
+                    // 遍历部门以及部门里面的用户列表，删除用户数量为0的部门
+                    Iterator<AllUserInfoStatus> iterable = employeeStatusList.iterator();
+                    while ((iterable).hasNext()) {
+                        AllUserInfoStatus value = iterable.next();
+                        // 如果部门人员数量为0，则删除这个部门
+                        if (value.getUsers().size() == 0) {
+                            iterable.remove();
+                        } else {
+                            showDataList.add(new ShowData(POSITION, value.getPosition()));
+                            for (int i = 0; i < value.getUsers().size(); i++) {
+                                showDataList.add(new ShowData(EMPLOYEE, value.getUsers().get(i)));
+                            }
+                        }
+                    }
+                    // 构造显示对象
+                    BoardData boardData = new BoardData();
+                    boardData.setProjectAnnouncementList(projectAnnouncementList);
+                    boardData.setShowDataList(showDataList);
+                    // 发送给页面展示
+                    EventMsg msg = new EventMsg();
+                    msg.setTag(Constants.SHOW_USER_STATUS);
+                    msg.setMsg(GsonUtils.convertJSON(boardData));
+                    EventBus.getDefault().post(msg);
+                    LogUtils.d(TAG, "定时任务，查询人员状态成功");
+                } else if (result.getCode() == ErrorCode.FAIL) {
+                    LogUtils.d(TAG, "定时任务，查询人员状态失败");
                 }
             }
         });

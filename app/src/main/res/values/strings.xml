@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">中本硕公示板</string>
-    <string name="app_title">明治项目(中本硕)公示板</string>
+    <string name="app_title">明 治 项 目 ( 中 本 硕 ) 公 示 板</string>
 
     <string name="RealTimeSyncService">同步服务</string>
     <string name="RealTimeSyncServiceRunning">同步服务正在运行</string>

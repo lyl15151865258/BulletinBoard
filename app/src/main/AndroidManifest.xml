@@ -43,7 +43,7 @@
             android:value="2.4" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -76,12 +76,6 @@
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="sensorLandscape" />
-
-        <!-- WebSocket通信服务 -->
-        <service
-            android:name=".service.WebSocketService"
-            android:enabled="true"
-            android:persistent="true" />
 
         <!-- 定时任务服务 -->
         <service

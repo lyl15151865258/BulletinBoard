@@ -7,10 +7,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
+
+import androidx.annotation.Nullable;
 
 import com.zhongbenshuo.bulletinboard.R;
 import com.zhongbenshuo.bulletinboard.utils.LogUtils;

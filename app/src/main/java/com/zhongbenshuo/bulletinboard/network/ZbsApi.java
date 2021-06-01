@@ -1,7 +1,6 @@
 package com.zhongbenshuo.bulletinboard.network;
 
 import com.google.gson.JsonObject;
-import com.zhongbenshuo.bulletinboard.bean.OpenAndCloseDoorRecord;
 import com.zhongbenshuo.bulletinboard.bean.Result;
 import com.zhongbenshuo.bulletinboard.bean.Weather;
 
@@ -35,14 +34,6 @@ public interface ZbsApi {
     Observable<Result> getRSAPublicKey();
 
     /**
-     * 远程开关门
-     *
-     * @return 返回值
-     */
-    @POST("user/openAndCloseDoorRecord.do")
-    Observable<Result> openAndCloseDoorRecord(@Body OpenAndCloseDoorRecord params);
-
-    /**
      * 高德天气接口
      *
      * @return 返回值
@@ -50,6 +41,14 @@ public interface ZbsApi {
     @POST("weather/weatherInfo")
     @FormUrlEncoded
     Observable<Weather> searchWeather(@Field("key") String key, @Field("city") String city, @Field("extensions") String extensions, @Field("output") String output);
+
+    /**
+     * 查询员工状态
+     *
+     * @return 返回值
+     */
+    @POST("user/getEmployeeStatusByDepartment.do")
+    Observable<Result> getEmployeeStatusByDepartment(@Body JsonObject params);
 
     /**
      * 查询最新的版本信息

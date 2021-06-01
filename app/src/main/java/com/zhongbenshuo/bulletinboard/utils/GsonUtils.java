@@ -42,6 +42,27 @@ public final class GsonUtils {
     }
 
     /**
+     * 解析列表类型的json字符串
+     *
+     * @param jsonString json字符串
+     * @param cls        泛型类
+     * @return 对象
+     */
+    public static <T> List<T> parseJSONList(String jsonString, Class<T> cls) {
+        List<T> list = new ArrayList<>();
+        try {
+            Gson gson = new Gson();
+            JsonArray arry = new JsonParser().parse(jsonString).getAsJsonArray();
+            for (JsonElement jsonElement : arry) {
+                list.add(gson.fromJson(jsonElement, cls));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
      * 解析json数组
      * <p>
      * Type所在的包：java.lang.reflect

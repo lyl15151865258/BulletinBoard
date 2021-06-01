@@ -82,7 +82,6 @@ public class NetClient {
         } else {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         }
-        LogUtils.d(TAG, "Application为空吗：" + (BulletinBoard.getInstance() == null));
         //设置缓存目录
         File cacheFile = new File(BulletinBoard.getInstance().getExternalCacheDir(), CACHE_NAME);
         //生成缓存，50M

@@ -1,12 +1,13 @@
 package com.zhongbenshuo.bulletinboard.utils;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class PermissionUtil {
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     // 判断是否还需要申请权限
-    public static boolean isNeedRequestPermission(AppCompatActivity activity) {
+    public static boolean isNeedRequestPermission(Activity activity) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             // Android6.0以下不需要申请权限
             return false;
@@ -45,7 +46,7 @@ public class PermissionUtil {
     }
 
     // 判断是否需要申请权限
-    private static boolean isNeedRequestPermission(AppCompatActivity activity, String... permissions) {
+    private static boolean isNeedRequestPermission(Activity activity, String... permissions) {
         List<String> mPermissionListDenied = new ArrayList<>();
         for (String permission : permissions) {
             int result = checkPermission(activity, permission);
@@ -57,7 +58,7 @@ public class PermissionUtil {
     }
 
     // 申请权限
-    public static void requestPermission(AppCompatActivity activity) {
+    public static void requestPermission(Activity activity) {
         // 遍历取出未授权的权限
         List<String> mPermissionListDenied = new ArrayList<>();
         for (String permission : mPermissionList) {

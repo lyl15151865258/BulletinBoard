@@ -7,10 +7,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import java.lang.reflect.Field;
 import java.security.MessageDigest;

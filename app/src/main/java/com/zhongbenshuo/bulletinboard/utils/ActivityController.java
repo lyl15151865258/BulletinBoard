@@ -6,7 +6,6 @@ import android.content.Intent;
 
 
 import com.zhongbenshuo.bulletinboard.service.TimeTaskService;
-import com.zhongbenshuo.bulletinboard.service.WebSocketService;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -98,8 +97,6 @@ public class ActivityController {
     public static void exit(Context context) {
 
         // 停止服务
-        Intent intent = new Intent(context, WebSocketService.class);
-        context.stopService(intent);
         Intent intent1 = new Intent(context, TimeTaskService.class);
         context.stopService(intent1);
 

@@ -42,17 +42,11 @@ public class Constants {
      * EventBus标记
      */
     public static final String CONNECT_SUCCESS_SOCKET = "connectSuccess_socket";
-    public static final String CONNECT_SUCCESS_WEBSOCKET = "connectSuccess_webSocket";
-    public static final String CONNECT_FAIL_SOCKET = "connectFail_socket";
     public static final String CONNECT_FAIL_WEBSOCKET = "connectFail_webSocket";
-    public static final String CONNECT_OPEN_SOCKET = "connectOpen_socket";
     public static final String CONNECT_OPEN_WEBSOCKET = "connectOpen_webSocket";
-    public static final String CONNECT_CLOSE_SOCKET = "connectClose_socket";
     public static final String CONNECT_CLOSE_WEBSOCKET = "connectClose_webSocket";
-    public static final String SHOW_TOAST_SOCKET = "showToast_socket";
     public static final String SHOW_TOAST_WEBSOCKET = "showToast_webSocket";
-    public static final String SHOW_DATA_SOCKET = "showData_socket";
-    public static final String SHOW_DATA_WEBSOCKET = "showData_webSocket";
-    public static final String SHOW_USER_PHOTO = "showUserPhoto";
     public static final String SHOW_WEATHER = "showWeather";
+    public static final String SHOW_USER_STATUS = "showUserStatus";
+    public static final String CHANGE_PAGE = "changePage";
 }

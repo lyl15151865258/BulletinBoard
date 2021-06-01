@@ -9,7 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;

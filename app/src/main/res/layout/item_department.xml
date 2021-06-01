@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/topDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:background="@color/transparent"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tvPosition"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/fzzzhf"
+        android:gravity="start"
+        android:paddingTop="@dimen/dp_1"
+        android:paddingBottom="@dimen/dp_1"
+        android:textColor="@color/gray_5"
+        android:textSize="@dimen/sp_12"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/bottomDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:background="@color/divider"
+        android:visibility="visible" />
+
+</LinearLayout>

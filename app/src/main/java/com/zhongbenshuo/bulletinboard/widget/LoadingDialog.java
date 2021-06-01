@@ -2,7 +2,9 @@ package com.zhongbenshuo.bulletinboard.widget;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+
+import androidx.appcompat.app.AlertDialog;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
