@@ -10,8 +10,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.zhongbenshuo.bulletinboard.R;
-import com.zhongbenshuo.bulletinboard.bean.userstatus.ShowData;
-import com.zhongbenshuo.bulletinboard.bean.userstatus.UserInfoStatus;
+import com.zhongbenshuo.bulletinboard.bean.ShowData;
+import com.zhongbenshuo.bulletinboard.bean.UserInfoStatus;
 import com.zhongbenshuo.bulletinboard.utils.GsonUtils;
 import com.zhongbenshuo.bulletinboard.utils.LogUtils;
 

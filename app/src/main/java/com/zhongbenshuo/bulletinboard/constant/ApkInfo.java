@@ -20,6 +20,7 @@ public class ApkInfo {
     public static final String APK_TYPE_ID_FaceRecognize = "2";
     public static final String APK_TYPE_ID_AirCondition = "3";
     public static final String APK_TYPE_ID_EmployeeStatus = "4";
+    public static final String APK_TYPE_ID_BulletinBoard_MingZhi = "5";
 
     // 文件路径
     public final static String APP_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + BulletinBoard.getInstance().getPackageName();

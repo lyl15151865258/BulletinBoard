@@ -1,7 +1,6 @@
 package com.zhongbenshuo.bulletinboard.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.zhongbenshuo.bulletinboard.R;
 import com.zhongbenshuo.bulletinboard.bean.ProjectAnnouncement;
-import com.zhongbenshuo.bulletinboard.bean.userstatus.ShowData;
-import com.zhongbenshuo.bulletinboard.bean.userstatus.UserInfoStatus;
-import com.zhongbenshuo.bulletinboard.utils.GsonUtils;
-import com.zhongbenshuo.bulletinboard.utils.LogUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,14 +41,14 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(@NotNull RecyclerView.ViewHolder holder, int position) {
-        ProjectAnnouncement announcement = projectAnnouncementList.get(position);
+        ProjectAnnouncement announcement = projectAnnouncementList.get(position % projectAnnouncementList.size());
         AnnouncementViewHolder announcementViewHolder = (AnnouncementViewHolder) holder;
-        announcementViewHolder.tvContent.setText((position + 1) + "、" + announcement.getQuotation());
+        announcementViewHolder.tvContent.setText((position % projectAnnouncementList.size() + 1) + "、" + announcement.getQuotation());
     }
 
     @Override
     public int getItemCount() {
-        return projectAnnouncementList.size();
+        return Integer.MAX_VALUE;
     }
 
     private class AnnouncementViewHolder extends RecyclerView.ViewHolder {

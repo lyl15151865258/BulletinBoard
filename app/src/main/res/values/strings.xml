@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">中本硕公示板</string>
-    <string name="app_title">明 治 项 目 ( 中 本 硕 ) 公 示 板</string>
+    <string name="app_name">项目公示板</string>
+    <string name="app_title">中本硕项目公示板</string>
+    <string name="app_title_mingzhi">明 治 项 目 ( 中 本 硕 ) 公 示 板</string>
 
     <string name="RealTimeSyncService">同步服务</string>
     <string name="RealTimeSyncServiceRunning">同步服务正在运行</string>

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.view.KeyEvent;
+import android.widget.TextView;
 
 import com.zhongbenshuo.bulletinboard.R;
 import com.zhongbenshuo.bulletinboard.bean.RSAResult;
@@ -41,12 +42,15 @@ import io.reactivex.schedulers.Schedulers;
 public class LogoActivity extends BaseActivity {
 
     private Context mContext;
+    private TextView tvTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logo);
         mContext = this;
+        tvTitle = findViewById(R.id.tvTitle);
+        tvTitle.setText(R.string.app_title);
         checkPermission();
     }
 

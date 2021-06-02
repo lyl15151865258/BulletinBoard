@@ -11,7 +11,7 @@
     </style>
 
     <style name="SplashTheme" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/bg_logo</item>
+        <item name="android:windowBackground">@drawable/bg_screen_default</item>
     </style>
 
     <!-- 自定义loading dialog -->

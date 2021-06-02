@@ -26,9 +26,9 @@ import com.zhongbenshuo.bulletinboard.bean.EventMsg;
 import com.zhongbenshuo.bulletinboard.bean.ProjectAnnouncement;
 import com.zhongbenshuo.bulletinboard.bean.Result;
 import com.zhongbenshuo.bulletinboard.bean.Weather;
-import com.zhongbenshuo.bulletinboard.bean.userstatus.AllUserInfoStatus;
-import com.zhongbenshuo.bulletinboard.bean.userstatus.AllUserInfoStatusResult;
-import com.zhongbenshuo.bulletinboard.bean.userstatus.ShowData;
+import com.zhongbenshuo.bulletinboard.bean.AllUserInfoStatus;
+import com.zhongbenshuo.bulletinboard.bean.AllUserInfoStatusResult;
+import com.zhongbenshuo.bulletinboard.bean.ShowData;
 import com.zhongbenshuo.bulletinboard.constant.Constants;
 import com.zhongbenshuo.bulletinboard.constant.ErrorCode;
 import com.zhongbenshuo.bulletinboard.constant.NetWork;
@@ -54,8 +54,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.zhongbenshuo.bulletinboard.bean.userstatus.ShowData.EMPLOYEE;
-import static com.zhongbenshuo.bulletinboard.bean.userstatus.ShowData.POSITION;
+import static com.zhongbenshuo.bulletinboard.bean.ShowData.EMPLOYEE;
+import static com.zhongbenshuo.bulletinboard.bean.ShowData.POSITION;
 
 /**
  * 定时任务服务（定时同步服务器数据，定时重启）

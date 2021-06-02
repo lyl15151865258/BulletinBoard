@@ -1,7 +1,5 @@
 package com.zhongbenshuo.bulletinboard.bean;
 
-import com.zhongbenshuo.bulletinboard.bean.userstatus.ShowData;
-
 import java.util.List;
 
 /**

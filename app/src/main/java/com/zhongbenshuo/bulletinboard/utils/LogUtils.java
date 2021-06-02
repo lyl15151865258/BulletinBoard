@@ -12,9 +12,9 @@ import android.util.Log;
 public class LogUtils {
 
 
-    public static final String TAG = "NjMeter";
+    public static final String TAG = "ZBS";
 
-    private static final String TAG_TRACE = "NjMeter";
+    private static final String TAG_TRACE = "ZBS";
 
     private static final class StackTraceDebug extends RuntimeException {
         final static private long serialVersionUID = 27058374L;

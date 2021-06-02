@@ -22,8 +22,7 @@
         android:paddingTop="@dimen/dp_1"
         android:paddingBottom="@dimen/dp_1"
         android:textColor="@color/gray_5"
-        android:textSize="@dimen/sp_12"
-        android:textStyle="bold" />
+        android:textSize="@dimen/sp_12" />
 
     <View
         android:id="@+id/bottomDivider"

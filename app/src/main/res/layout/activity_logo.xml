@@ -3,31 +3,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_logo"
+    android:background="@drawable/bg_screen_default"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".activity.LogoActivity">
 
     <TextView
+        android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fontFamily="@font/youyuan"
+        android:fontFamily="@font/fzzzhf"
         android:gravity="center"
         android:text="@string/app_title"
         android:textColor="@color/white"
-        android:textSize="56sp"
-        android:visibility="gone" />
+        android:textSize="@dimen/sp_56" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/youyuan"
+        android:fontFamily="@font/fzzzhf"
         android:gravity="center"
-        android:padding="@dimen/dp_10"
+        android:padding="@dimen/dp_5"
         android:text="版权所有 @ 中本硕建设（苏州）有限公司 2021"
         android:textColor="@color/white"
-        android:textSize="20sp"
-        android:visibility="gone" />
+        android:textSize="@dimen/sp_18" />
 
 </LinearLayout>

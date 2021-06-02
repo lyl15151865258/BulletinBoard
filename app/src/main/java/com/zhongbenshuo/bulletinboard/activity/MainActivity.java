@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.JsonObject;
 import com.zhongbenshuo.bulletinboard.BuildConfig;
 import com.zhongbenshuo.bulletinboard.R;
-import com.zhongbenshuo.bulletinboard.adapter.AnnouncementAdapter;
 import com.zhongbenshuo.bulletinboard.adapter.StatusAdapter;
 import com.zhongbenshuo.bulletinboard.bean.BoardData;
 import com.zhongbenshuo.bulletinboard.bean.EventMsg;
@@ -36,11 +35,13 @@ import com.zhongbenshuo.bulletinboard.bean.Result;
 import com.zhongbenshuo.bulletinboard.bean.VersionInfo;
 import com.zhongbenshuo.bulletinboard.bean.VersionResult;
 import com.zhongbenshuo.bulletinboard.bean.Weather;
-import com.zhongbenshuo.bulletinboard.bean.userstatus.ShowData;
+import com.zhongbenshuo.bulletinboard.bean.ShowData;
 import com.zhongbenshuo.bulletinboard.constant.ApkInfo;
 import com.zhongbenshuo.bulletinboard.constant.Constants;
 import com.zhongbenshuo.bulletinboard.constant.ErrorCode;
+import com.zhongbenshuo.bulletinboard.contentprovider.SPHelper;
 import com.zhongbenshuo.bulletinboard.interfaces.DownloadProgress;
+import com.zhongbenshuo.bulletinboard.interfaces.OnDoubleClickListener;
 import com.zhongbenshuo.bulletinboard.network.ExceptionHandle;
 import com.zhongbenshuo.bulletinboard.network.NetClient;
 import com.zhongbenshuo.bulletinboard.network.NetworkObserver;
@@ -68,6 +69,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.zhongbenshuo.bulletinboard.constant.Screen.ANNOUNCEMENT_SHOW_ROW;
+import static com.zhongbenshuo.bulletinboard.constant.Screen.USER_SHOW_ROW;
+
 /**
  * 主页面，环境监测页面
  * Created at 2019/9/24 18:21
@@ -80,12 +84,19 @@ public class MainActivity extends BaseActivity {
 
     private Context mContext;
     private ImageView ivWeather;
-    private TextView tvCity, tvWeather, tvTemperature, tvWind, tvHumidity;
+    private TextView tvCity, tvWeather, tvTemperature, tvWind, tvHumidity, tvAnnouncement;
     private List<ShowData> allDataList, showDataList;
-    private int totalPage = 0, currentPage = 1;
+    private int announcementShowRow, userShowRow, totalPage = 0, currentPage = 1;
     private List<ProjectAnnouncement> projectAnnouncementList;
+    // 原始内容
+    private final StringBuffer originContent = new StringBuffer();
+    // 上一次原始内容
+    private final StringBuffer allContent = new StringBuffer();
+    // 当前显示内容
+    private final StringBuffer currentContent = new StringBuffer();
+    // 剩余内容
+    private final StringBuffer leftContent = new StringBuffer();
     private StatusAdapter statusAdapter;
-    private AnnouncementAdapter announcementAdapter;
 
     private ImageView ivNetWork;
 
@@ -108,26 +119,33 @@ public class MainActivity extends BaseActivity {
 
         ivWeather = findViewById(R.id.ivWeather);
 
+        TextView tvTitle = findViewById(R.id.tvTitle);
+        tvTitle.setText(R.string.app_title_mingzhi);
         tvCity = findViewById(R.id.tvCity);
         tvWeather = findViewById(R.id.tvWeather);
         tvTemperature = findViewById(R.id.tvTemperature);
         tvWind = findViewById(R.id.tvWind);
         tvHumidity = findViewById(R.id.tvHumidity);
-        TextView tvWeek = findViewById(R.id.tvWeek);
+        TextView tvYearWeek = findViewById(R.id.tvYearWeek);
+        TextView tvTime = findViewById(R.id.tvTime);
         Typeface typeFaceBlack = Typeface.createFromAsset(getAssets(), "fonts/fzzzhf.TTF");
-        tvWeek.setTypeface(typeFaceBlack);
+        tvYearWeek.setTypeface(typeFaceBlack);
+        tvTime.setTypeface(typeFaceBlack);
 
         allDataList = new ArrayList<>();
         showDataList = new ArrayList<>();
         projectAnnouncementList = new ArrayList<>();
 
+        findViewById(R.id.leftTop).setOnTouchListener(onTouchListener1);
+        findViewById(R.id.leftBottom).setOnTouchListener(onTouchListener2);
+        findViewById(R.id.rightTop).setOnTouchListener(onTouchListener3);
+        findViewById(R.id.rightBottom).setOnTouchListener(onTouchListener4);
+
+        announcementShowRow = SPHelper.getInt("ANNOUNCEMENT_SHOW_ROW", ANNOUNCEMENT_SHOW_ROW);
+        userShowRow = SPHelper.getInt("USER_SHOW_ROW", USER_SHOW_ROW);
+
         // 公告
-        RecyclerView rvAnnouncement = findViewById(R.id.rvAnnouncement);
-        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(mContext);
-        linearLayoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
-        rvAnnouncement.setLayoutManager(linearLayoutManager1);
-        announcementAdapter = new AnnouncementAdapter(this, projectAnnouncementList);
-        rvAnnouncement.setAdapter(announcementAdapter);
+        tvAnnouncement = findViewById(R.id.tvAnnouncement);
 
         // 员工状态
         RecyclerView rvStatus = findViewById(R.id.rvStatus);
@@ -165,6 +183,14 @@ public class MainActivity extends BaseActivity {
         searchNewVersion(false);
     }
 
+    private final View.OnTouchListener onTouchListener1 = new OnDoubleClickListener(this::addLines);
+
+    private final View.OnTouchListener onTouchListener2 = new OnDoubleClickListener(this::minusLines);
+
+    private final View.OnTouchListener onTouchListener3 = new OnDoubleClickListener(this::addRows);
+
+    private final View.OnTouchListener onTouchListener4 = new OnDoubleClickListener(this::minusRows);
+
     /**
      * 收到EventBus发来的消息并处理
      *
@@ -190,38 +216,84 @@ public class MainActivity extends BaseActivity {
         }
         if (msg.getTag().equals(Constants.SHOW_USER_STATUS)) {
             //接收到这个消息说明需要展示数据
-
             BoardData boardData = GsonUtils.parseJSON(msg.getMsg(), BoardData.class);
 
+            // 公告栏部分
             projectAnnouncementList.clear();
             projectAnnouncementList.addAll(boardData.getProjectAnnouncementList());
-            announcementAdapter.notifyDataSetChanged();
 
+            // 清空公告内容
+            originContent.delete(0, originContent.length());
+            for (int i = 0; i < projectAnnouncementList.size(); i++) {
+                originContent.append(i + 1);
+                originContent.append("、");
+                originContent.append(projectAnnouncementList.get(i).getQuotation());
+                if (i != projectAnnouncementList.size() - 1) {
+                    originContent.append("\n");
+                }
+            }
+            LogUtils.d(TAG, "原始内容是：" + originContent.toString());
+            LogUtils.d(TAG, "页面内容是：" + allContent.toString());
+            if (!originContent.toString().equals(allContent.toString())) {
+                // 如果内容发生变化，重新展示最新的内容
+                LogUtils.d(TAG, "内容发生变化：" + originContent);
+                allContent.delete(0, allContent.length());
+                allContent.append(originContent);
+
+                tvAnnouncement.setMaxLines(announcementShowRow);
+                tvAnnouncement.setText(allContent);
+                currentContent.delete(0, currentContent.length());
+                currentContent.append(tvAnnouncement.getText().subSequence(0, tvAnnouncement.getLayout().getLineEnd(Math.min(announcementShowRow - 1, tvAnnouncement.getLineCount() - 1))));
+                LogUtils.d(TAG, "当前显示的内容：" + currentContent.toString());
+                // 计算剩余内容
+                leftContent.delete(0, leftContent.length());
+                leftContent.append(allContent.delete(0, currentContent.toString().length()));
+                // 重新赋值原始内容
+                allContent.delete(0, allContent.length());
+                allContent.append(originContent);
+                LogUtils.d(TAG, "剩余内容：" + leftContent.toString());
+            }
+
+            // 人员动态部分
             allDataList.clear();
             allDataList.addAll(boardData.getShowDataList());
-
             // 更改总页面数量
-            if (allDataList.size() % 15 == 0) {
-                totalPage = allDataList.size() / 15;
+            if (allDataList.size() % userShowRow == 0) {
+                totalPage = allDataList.size() / userShowRow;
             } else {
-                totalPage = allDataList.size() / 15 + 1;
+                totalPage = allDataList.size() / userShowRow + 1;
             }
-            LogUtils.d(TAG, "页面总数：" + totalPage + "，当前页面：" + currentPage);
-            showDataList.clear();
-            showDataList.addAll(allDataList.subList((currentPage - 1) * 15, Math.min(allDataList.size(), (currentPage * 15))));
-            statusAdapter.notifyDataSetChanged();
+            LogUtils.d(TAG, "人员页面总数：" + totalPage + "，当前页面：" + currentPage);
+            refreshUsers();
         }
         if (msg.getTag().equals(Constants.CHANGE_PAGE)) {
             //接收到这个消息说明需要翻页
+            // 人员动态翻页
             if (currentPage < totalPage) {
                 currentPage++;
             } else {
                 currentPage = 1;
             }
-            LogUtils.d(TAG, "页面总数：" + totalPage + "，当前页面：" + currentPage);
-            showDataList.clear();
-            showDataList.addAll(allDataList.subList((currentPage - 1) * 15, Math.min(allDataList.size(), (currentPage * 15))));
-            statusAdapter.notifyDataSetChanged();
+            LogUtils.d(TAG, "人员页面总数：" + totalPage + "，当前页面：" + currentPage);
+            refreshUsers();
+            // 公告栏翻页
+            if (leftContent.toString().length() > 0) {
+                LogUtils.d(TAG, "剩余内容长度大于0");
+                tvAnnouncement.setMaxLines(announcementShowRow);
+                tvAnnouncement.setText(leftContent);
+                currentContent.delete(0, currentContent.length());
+                LogUtils.d(TAG, "当前显示的行数：" + tvAnnouncement.getLineCount());
+
+                currentContent.append(tvAnnouncement.getText().subSequence(0, tvAnnouncement.getLayout().getLineEnd(Math.min(announcementShowRow - 1, tvAnnouncement.getLineCount() - 1))));
+
+                LogUtils.d(TAG, "翻页显示的内容：" + currentContent.toString());
+                leftContent.delete(0, currentContent.toString().length());
+                LogUtils.d(TAG, "翻页，剩余内容：" + leftContent);
+            } else {
+                LogUtils.d(TAG, "没有剩余内容了，重新展示第一页");
+                // 重新展示第一页内容
+                refreshAnnouncement();
+            }
         }
         if (msg.getTag().equals(Constants.SHOW_WEATHER)) {
             //接收到实时天气信息
@@ -362,29 +434,31 @@ public class MainActivity extends BaseActivity {
                 LogUtils.d(TAG, "点击了设置键");
                 break;
             case KeyEvent.KEYCODE_DPAD_DOWN:
-                //向下键
+                //向下键，公告行数减一
                 /*    实际开发中有时候会触发两次，所以要判断一下按下时触发 ，松开按键时不触发
                  *    exp:KeyEvent.ACTION_UP
                  */
                 LogUtils.d(TAG, "点击了下键");
+                minusLines();
                 break;
             case KeyEvent.KEYCODE_DPAD_UP:
-                //向上键
+                //向上键，公告行数加一
                 LogUtils.d(TAG, "点击了上键");
+                addLines();
                 break;
             case KeyEvent.KEYCODE_0:
                 //数字键0
                 LogUtils.d(TAG, "点击了数字键0");
                 break;
             case KeyEvent.KEYCODE_DPAD_LEFT:
-                //向左键
+                //向左键，人员条数减一
                 LogUtils.d(TAG, "点击了左键");
-                searchNewVersion(true);
+                minusRows();
                 break;
             case KeyEvent.KEYCODE_DPAD_RIGHT:
-                //向右键
+                //向右键，人员条数加一
                 LogUtils.d(TAG, "点击了右键");
-                searchNewVersion(true);
+                addRows();
                 break;
             case KeyEvent.KEYCODE_INFO:
                 //info键
@@ -416,6 +490,92 @@ public class MainActivity extends BaseActivity {
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 每列行数增加
+     */
+    private void addRows() {
+        userShowRow++;
+        SPHelper.save("USER_SHOW_ROW", userShowRow);
+        showToast("当前人员显示" + userShowRow + "行");
+        // 更改总页面数量
+        if (allDataList.size() % userShowRow == 0) {
+            totalPage = allDataList.size() / userShowRow;
+        } else {
+            totalPage = allDataList.size() / userShowRow + 1;
+        }
+        LogUtils.d(TAG, "页面总数：" + totalPage + "，当前页面：" + currentPage);
+        refreshUsers();
+    }
+
+    /**
+     * 每列行数减少
+     */
+    private void minusRows() {
+        if (userShowRow > 1) {
+            userShowRow--;
+            SPHelper.save("USER_SHOW_ROW", userShowRow);
+            showToast("当前人员显示" + userShowRow + "行");
+            // 更改总页面数量
+            if (allDataList.size() % userShowRow == 0) {
+                totalPage = allDataList.size() / userShowRow;
+            } else {
+                totalPage = allDataList.size() / userShowRow + 1;
+            }
+            LogUtils.d(TAG, "页面总数：" + totalPage + "，当前页面：" + currentPage);
+            refreshUsers();
+        } else {
+            showToast("每列不能小于1行");
+        }
+    }
+
+    /**
+     * 增加文本行数
+     */
+    private void addLines() {
+        announcementShowRow++;
+        SPHelper.save("ANNOUNCEMENT_SHOW_ROW", announcementShowRow);
+        showToast("当前公告显示" + announcementShowRow + "行");
+        refreshAnnouncement();
+    }
+
+    /**
+     * 减少文本行数
+     */
+    private void minusLines() {
+        if (announcementShowRow > 1) {
+            announcementShowRow--;
+            SPHelper.save("ANNOUNCEMENT_SHOW_ROW", announcementShowRow);
+            showToast("当前公告显示" + announcementShowRow + "行");
+            refreshAnnouncement();
+        } else {
+            showToast("公告显示不能小于1行");
+        }
+    }
+
+    /**
+     * 刷新人员页面
+     */
+    private void refreshUsers() {
+        showDataList.clear();
+        showDataList.addAll(allDataList.subList((currentPage - 1) * userShowRow, Math.min(allDataList.size(), (currentPage * userShowRow))));
+        statusAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 刷新公告页面
+     */
+    private void refreshAnnouncement() {
+        tvAnnouncement.setMaxLines(announcementShowRow);
+        tvAnnouncement.setText(allContent);
+        currentContent.delete(0, currentContent.length());
+        currentContent.append(tvAnnouncement.getText().subSequence(0, tvAnnouncement.getLayout().getLineEnd(Math.min(announcementShowRow - 1, tvAnnouncement.getLineCount() - 1))));
+        LogUtils.d(TAG, "刷新公告页面，当前显示的内容：" + currentContent.toString());
+
+        leftContent.delete(0, leftContent.length());
+        leftContent.append(allContent.toString().substring(currentContent.toString().length()));
+        LogUtils.d(TAG, "刷新公告页面，剩余内容：" + leftContent.toString());
     }
 
     @Override
@@ -455,7 +615,7 @@ public class MainActivity extends BaseActivity {
      */
     public void searchNewVersion(boolean showToast) {
         JsonObject params = new JsonObject();
-        params.addProperty("apkTypeId", ApkInfo.APK_TYPE_ID_AirCondition);
+        params.addProperty("apkTypeId", ApkInfo.APK_TYPE_ID_BulletinBoard_MingZhi);
 
         Observable<Result> resultObservable = NetClient.getInstance(NetClient.getBaseUrlProject(), false, true).getZbsApi().searchNewVersion(params);
         resultObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new NetworkObserver<Result>(this) {
