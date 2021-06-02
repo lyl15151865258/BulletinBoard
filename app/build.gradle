@@ -1,4 +1,9 @@
 apply plugin: 'com.android.application'
+
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion 30
     buildToolsVersion '28.0.3'
@@ -21,16 +26,61 @@ android {
         }
     }
 
-    buildTypes {
+    signingConfigs {
+        debug {
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
         release {
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
+
+    buildTypes {
+        debug {
+            // 是否支持调试
+            debuggable true
+            // 是否支持jni调试
+            jniDebuggable true
+            // 代码压缩
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            // 移除无用的resource文件
+            shrinkResources false
+            // 是否支持Zipalign优化
+            zipAlignEnabled true
+            // 是否支持本地化整理
+            pseudoLocalesEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //打签名包时，需要添加此设置
+            signingConfig signingConfigs.debug
+        }
+        release {
+            // 是否支持调试
+            debuggable true
+            // 是否支持jni调试
+            jniDebuggable true
+            // 代码压缩
+            minifyEnabled false
+            // 移除无用的resource文件
+            shrinkResources false
+            // 是否支持Zipalign优化
+            zipAlignEnabled true
+            // 是否支持本地化整理
+            pseudoLocalesEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //打签名包时，需要添加此设置
+            signingConfig signingConfigs.release
         }
     }
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "BulletinBoard_${variant.versionName}.apk"
+            outputFileName = "ZBSBoard_${variant.versionName}.apk"
         }
     }
 
@@ -51,8 +101,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     // eventbus
     implementation 'org.greenrobot:eventbus:3.1.1'
-    // WebSocket 依赖包
-    implementation 'org.java-websocket:Java-WebSocket:1.5.1'
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     //okhttp、retrofit
