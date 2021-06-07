@@ -11,8 +11,8 @@ android {
         applicationId "com.zhongbenshuo.bulletinboard"
         minSdkVersion 17
         targetSdkVersion 30
-        versionCode 20210604
-        versionName "1.0.1"
+        versionCode 20210607
+        versionName "1.0.2"
 
         ndk {
             abiFilters "armeabi", "x86", "armeabi-v7a", "arm64-v8a", "x86_64"
