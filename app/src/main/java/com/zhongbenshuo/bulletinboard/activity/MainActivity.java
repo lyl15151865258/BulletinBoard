@@ -59,6 +59,7 @@ import com.zhongbenshuo.bulletinboard.widget.UpgradeVersionDialog;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -218,7 +219,7 @@ public class MainActivity extends BaseActivity {
             //接收到这个消息说明需要展示数据
             BoardData boardData = GsonUtils.parseJSON(msg.getMsg(), BoardData.class);
 
-            // 公告栏部分
+            // ************************************* 公告栏部分 *************************************
             projectAnnouncementList.clear();
             projectAnnouncementList.addAll(boardData.getProjectAnnouncementList());
 
@@ -253,18 +254,23 @@ public class MainActivity extends BaseActivity {
                 allContent.append(originContent);
                 LogUtils.d(TAG, "剩余内容：" + leftContent.toString());
             }
+            // ************************************* 公告栏部分 *************************************
 
-            // 人员动态部分
-            allDataList.clear();
-            allDataList.addAll(boardData.getShowDataList());
-            // 更改总页面数量
-            if (allDataList.size() % userShowRow == 0) {
-                totalPage = allDataList.size() / userShowRow;
-            } else {
-                totalPage = allDataList.size() / userShowRow + 1;
+            // ************************************* 人员动态部分 *************************************
+            if (boardData.getShowDataList().size() != allDataList.size() || !boardData.getShowDataList().containsAll(allDataList)) {
+                // 内容不相同时才更新
+                allDataList.clear();
+                allDataList.addAll(boardData.getShowDataList());
+                // 更改总页面数量
+                if (allDataList.size() % userShowRow == 0) {
+                    totalPage = allDataList.size() / userShowRow;
+                } else {
+                    totalPage = allDataList.size() / userShowRow + 1;
+                }
+                LogUtils.d(TAG, "人员页面总数：" + totalPage + "，当前页面：" + currentPage);
+                refreshUsers();
             }
-            LogUtils.d(TAG, "人员页面总数：" + totalPage + "，当前页面：" + currentPage);
-            refreshUsers();
+            // ************************************* 人员动态部分 *************************************
         }
         if (msg.getTag().equals(Constants.CHANGE_PAGE)) {
             //接收到这个消息说明需要翻页
@@ -299,7 +305,7 @@ public class MainActivity extends BaseActivity {
             //接收到实时天气信息
             LogUtils.d(TAG, "获取到实时天气信息");
             Weather weather = GsonUtils.parseJSON(msg.getMsg(), Weather.class);
-            if (weather.getStatus().equals("1") && weather.getInfocode().equals("10000") && Integer.valueOf(weather.getCount()) > 0) {
+            if (weather.getStatus().equals("1") && weather.getInfocode().equals("10000") && Integer.parseInt(weather.getCount()) > 0) {
                 Weather.Lives lives = weather.getLives().get(0);
 
                 tvCity.setText(lives.getCity());
@@ -631,7 +637,7 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onNext(Result result) {
+            public void onNext(@NotNull Result result) {
                 super.onNext(result);
                 cancelDialog();
                 VersionResult versionResult = GsonUtils.parseJSON(GsonUtils.convertJSON(result.getData()), VersionResult.class);
@@ -780,22 +786,18 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case INSTALL_PACKAGES_REQUEST_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    checkIsAndroidO();
-                } else {
-                    //  Android8.0以上引导用户手动开启安装权限
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        LogUtils.d(TAG, "需要引导用户手动开启安装权限");
-                        Uri packageURI = Uri.parse("package:" + mContext.getPackageName());
-                        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
-                        startActivityForResult(intent, GET_UNKNOWN_APP_SOURCES);
-                    }
+        if (requestCode == INSTALL_PACKAGES_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                checkIsAndroidO();
+            } else {
+                //  Android8.0以上引导用户手动开启安装权限
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    LogUtils.d(TAG, "需要引导用户手动开启安装权限");
+                    Uri packageURI = Uri.parse("package:" + mContext.getPackageName());
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
+                    startActivityForResult(intent, GET_UNKNOWN_APP_SOURCES);
                 }
-                break;
-            default:
-                break;
+            }
         }
     }
 
@@ -803,13 +805,8 @@ public class MainActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case GET_UNKNOWN_APP_SOURCES:
-                    // 从安装未知来源文件的设置页面返回
-                    checkIsAndroidO();
-                    break;
-                default:
-                    break;
+            if (requestCode == GET_UNKNOWN_APP_SOURCES) {// 从安装未知来源文件的设置页面返回
+                checkIsAndroidO();
             }
         }
     }

@@ -28,8 +28,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
             android:fontFamily="@font/fzzzhj"
+            android:gravity="center"
             android:padding="@dimen/dp_1"
             android:textSize="@dimen/sp_12" />
 
@@ -38,14 +38,16 @@
             android:layout_height="match_parent"
             android:background="@color/divider" />
 
-        <TextView
+        <com.zhongbenshuo.bulletinboard.widget.MarqueeTextView
             android:id="@+id/tvRemark"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
-            android:gravity="center"
+            android:ellipsize="marquee"
             android:fontFamily="@font/fzzzhj"
+            android:gravity="center"
             android:padding="@dimen/dp_1"
+            android:singleLine="true"
             android:textSize="@dimen/sp_12" />
 
         <View
@@ -58,8 +60,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
             android:fontFamily="@font/fzzzhj"
+            android:gravity="center"
             android:padding="@dimen/dp_1"
             android:textSize="@dimen/sp_12" />
 

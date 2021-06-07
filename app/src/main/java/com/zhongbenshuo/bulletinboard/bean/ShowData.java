@@ -1,5 +1,7 @@
 package com.zhongbenshuo.bulletinboard.bean;
 
+import com.zhongbenshuo.bulletinboard.utils.GsonUtils;
+
 /**
  * 人员状态板真正展示的内容
  * Created at 2019/9/30 9:30
@@ -35,5 +37,13 @@ public class ShowData {
 
     public void setObject(Object object) {
         this.object = object;
+    }
+
+    public boolean equals(Object obj) {
+        if (obj instanceof ShowData) {
+            ShowData s = (ShowData) obj;
+            return GsonUtils.convertJSON(this.object).equals(GsonUtils.convertJSON(s.object));
+        }
+        return super.equals(obj);
     }
 }

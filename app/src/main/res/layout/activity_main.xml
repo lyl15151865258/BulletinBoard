@@ -184,6 +184,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/fzzzhj"
+            android:lineSpacingMultiplier="1.2"
             android:padding="@dimen/dp_3"
             android:textColor="@color/gray_5"
             android:textSize="@dimen/sp_12" />
@@ -294,8 +295,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_5"
-            android:format12Hour="2022-02-02 EEEE"
-            android:format24Hour="2022-02-02 EEEE"
+            android:format12Hour="yyyy-MM-dd EEEE"
+            android:format24Hour="yyyy-MM-dd EEEE"
             android:text="2022-02-02 星期二"
             android:textColor="@color/gray_5"
             android:textSize="@dimen/sp_12" />
